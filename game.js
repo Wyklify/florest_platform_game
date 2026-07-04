@@ -14,6 +14,7 @@ import { loadGame } from "./loadGame.js"
 import { resetGame } from "./resetGame.js"
 import { createBackgroundRenderer, drawBackground } from "./background.js"
 
+
 window.buyUpgrade = buyUpgrade
 window.saveGame = saveGame
 window.loadGame = loadGame
