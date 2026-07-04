@@ -1,4 +1,4 @@
-let coins= [
+export let coins = [
     {x: 150, y: 280, collected: false},
     {x: 310, y: 230, collected: false},
     {x: 450, y: 180, collected: false}

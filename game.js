@@ -7,33 +7,30 @@ import { drawCoins,checkCoinCollection } from "./coins.js"
 import { drawHealth } from "./health.js"
 import {checkEnemyCollision} from "./enemies.js"
 import { drawGoal, checkWinOrLose } from "./gameOver.js"
+import { drawPowerUps, checkPowerUpCollection } from "./powerUps.js"
+import { buyUpgrade } from "./store.js"
+import { saveGame, autoSaveGame } from "./saveGame.js"
+import { loadGame } from "./loadGame.js"
+import { resetGame } from "./resetGame.js"
+import { createBackgroundRenderer, drawBackground } from "./background.js"
+
+window.buyUpgrade = buyUpgrade
+window.saveGame = saveGame
+window.loadGame = loadGame
+window.resetGame = resetGame
+
 
 export let canvas = document.getElementById("gameCanvas")
 let ctx = canvas.getContext("2d")
 
-let bglImage = new Image()
-bglImage.src = "background.png"
-
+let backgroundRenderer = createBackgroundRenderer("background.png")
 let groundHeight = 50
 
 initPlayer(canvas.height, groundHeight)
 
-function drawBackground(){
-    if (bglImage.complete && bglImage.naturalWidth !== 0) {
-        ctx.drawImage(bglImage, 0, 0, canvas.width, canvas.height)
-    } else {
-        ctx.fillStyle = "#87ceeb"
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-    }
-
-    ctx.fillStyle = "green"
-    ctx.fillRect(0, canvas.height - groundHeight, canvas.width, groundHeight)
-}
-
-
 function update(){
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    drawBackground()
+    drawBackground(ctx, canvas, groundHeight, backgroundRenderer)
     drawPlatforms(ctx)
     drawCoins(ctx)
     drawObstacles(ctx)
@@ -41,7 +38,9 @@ function update(){
     drawScore(ctx)
     drawHealth(ctx, player)
     drawGoal(ctx)
+    drawPowerUps(ctx)
     drawPlayer(player, ctx)
+
 
     updatePlayer(canvas.width, canvas.height, groundHeight)
     updateEnemies(canvas)
@@ -51,12 +50,14 @@ function update(){
     checkCoinCollection(player, gameState)
     checkEnemyCollision(player)
     checkWinOrLose(player, gameState)
+    checkPowerUpCollection(player)
     requestAnimationFrame(update)
 }
 
 
-bglImage.onload = () => update()
-bglImage.onerror = () => {
-    console.warn("Não foi possível carregar background.png. Usando fundo padrão.")
+function initGame() {
     update()
+    autoSaveGame() // Start auto-saving the game every 30 seconds
 }
+
+initGame()
